@@ -1,4 +1,4 @@
-#include"Table.h"
+#include "Table.h"
 
 Table::Table()
 {
@@ -8,7 +8,3 @@ Table::~Table()
 {
 }
 
-Table::Create()
-{
-
-}

@@ -1,5 +1,6 @@
 #include<iostream>
-#include<Table.h>
+#include"Table.h"
+#include"MainWindows.h"
 
 using namespace std;
 
