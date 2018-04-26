@@ -3,24 +3,40 @@
 #include<vector>
 #include<fstream>
 #include<list>
+#include<sstream>
+#include"Table.h"
 
 using namespace std;
 
-class Table;
 class MySQL
 {
 private:
-	list<Table> table;//存放TABLE
-	list<Table>::iterator it;//table的迭代器
-	vector<string> read_file;//存放已读文件的文件名
+	const string tip{ "(mysql)==>" };
+	const string order1{ "CREATE" };
+	const string order2{ "DROP" };
+	const string order3{ "TABLE LIST" };
+	const string order4{ "INSERT" };
+	const string order5{ "DELETE" };
+	const string order6{ "UPDATE" };
+	const string order7{ "SELECT" };
+	const string UNK{ "UNK" };
+	list<Table> table;
+	list<Table> ::iterator it;
+	vector<string> read_file;
 	ofstream fout;
 	ifstream fin;
-	const string tip{ "(mysql)==>" };
+	string order;
+	string File_name;
+	vector<string> order_array;
+	int mod;
+	string now_Tabel_name;
+	void Create();
+	void List();
+	void Drop();
+	void PrintFail();
+	void PrintNoTable();
 public:
 	void start();
-	void Create();//创建一个TABLE
-	void List();//查看当前TABLE的数量以及每个TABLE的行列和列标题
-	void Drop(string order);//删除一个TABLE
 	MySQL();
 	~MySQL();
 };
