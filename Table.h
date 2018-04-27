@@ -17,8 +17,8 @@ private:
 		int max_wide;
 	}Conlumn;
 
+	const string UNK{ "UNK" };
 	ofstream fout;
-	ifstream fin;
 	void Print_Line();
 public:
 	string File_name;

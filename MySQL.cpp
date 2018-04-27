@@ -69,7 +69,7 @@ void MySQL::start()
 						flag = true;
 					}
 				}
-				if(!flag)
+				if (!flag)
 					PrintFail();
 			}
 			break;
@@ -78,58 +78,69 @@ void MySQL::start()
 				PrintNoTable();
 			else {
 				i = 0;
-				while (order_array[i] != "FROM")
+				while (order_array[i] != "FROM"&&i < order_array.size())
 					i++;
-				now_Tabel_name = order_array[i + 1];
-				for (it = table.begin(); it != table.end(); it++) {
-					if (it->table_name == now_Tabel_name) {
-						it->Delete(order_array);
-						flag = true;
+				if (i == order_array.size())
+					cout << "Unknown order, check order DELETE!" << endl;
+				else {
+					now_Tabel_name = order_array[i + 1];
+					for (it = table.begin(); it != table.end(); it++) {
+						if (it->table_name == now_Tabel_name) {
+							it->Delete(order_array);
+							flag = true;
+						}
 					}
+					if (!flag)
+						PrintFail();
 				}
-				if (!flag)
-					PrintFail();
 			}
 			break;
 		case 6:
 			if (table.size() == 0)
 				PrintNoTable();
-			else {
-				now_Tabel_name = order_array[2];
+			else {		
+				now_Tabel_name = order_array[1];
 				for (it = table.begin(); it != table.end(); it++) {
 					if (it->table_name == now_Tabel_name) {
 						it->Update(order_array);
 						flag = true;
 					}
 				}
-				if (!flag)
-					PrintFail();
 			}
-			break;
+			if (!flag)
+				PrintFail();
+		break;
 		case 7:
 			if (table.size() == 0)
 				PrintNoTable();
 			else {
 				i = 0;
-				while (order_array[i] != "FROM")
+				while (order_array[i] != "FROM"&&i < order_array.size())
 					i++;
-				now_Tabel_name = order_array[i + 1];
-				for (it = table.begin(); it != table.end(); it++) {
-					if (it->table_name == now_Tabel_name) {
-						it->Select(order_array);
-						flag = true;
+				if (i == order_array.size())
+					cout << "Unknown order, check order SELECT!" << endl;
+				else {
+					now_Tabel_name = order_array[i + 1];
+					for (it = table.begin(); it != table.end(); it++) {
+						if (it->table_name == now_Tabel_name) {
+							it->Select(order_array);
+							flag = true;
+						}
 					}
+					if (!flag)
+						PrintFail();
 				}
-				if (!flag)
-					PrintFail();
 			}
 			break;
 		default:
-			if(order != "quit")
+			if (order != "quit")
 				cout << "Erro: Unknown order!" << endl;
 			break;
 		}
 		order_array.clear();
+	}
+	for (it = table.begin(); it != table.end(); it++) {
+		it->File_Write();
 	}
 	table.clear();
 }
@@ -140,7 +151,7 @@ void MySQL::Create()
 	int create_mod{};
 	int size = order_array.size();
 	int table_size = table.size();
-	vector<string> conlunm_help;
+	vector<string> conlumn_help;
 	string str_help{};
 	string input_help{};
 	stringstream ss_help;
@@ -179,16 +190,11 @@ void MySQL::Create()
 			}
 			ss_help.str(str_help);
 			while (ss_help >> input_help) {
-				conlunm_help.push_back(input_help);
+				conlumn_help.push_back(input_help);
 			}
-			table_help.conlumn.resize(conlunm_help.size());
-			for (int i = 0; i < conlunm_help.size(); i++) {
-				table_help.conlumn[i].conlumn_name = conlunm_help[i];
-				table_help.conlumn[i].max_wide = conlunm_help[i].length();
-				if (table_help.conlumn[i].max_wide < UNK.length()) {
-					table_help.conlumn[i].max_wide = UNK.length();
-				}
-			}
+			table_help.conlumn.resize(conlumn_help.size());
+			for (int i = 0; i < conlumn_help.size(); i++) 
+				table_help.conlumn[i].conlumn_name = conlumn_help[i];
 			table_help.File_Write();
 			table.push_back(table_help);
 			table_help.Print_table();
@@ -213,32 +219,25 @@ void MySQL::Create()
 				getline(fin, str_help);
 				ss_help.str(str_help);
 				while (ss_help >> input_help) {
-					conlunm_help.push_back(input_help);
+					conlumn_help.push_back(input_help);
 				}
-				table_help.conlumn.resize(conlunm_help.size());
-				for (int i = 0; i < conlunm_help.size(); i++) {
-					table_help.conlumn[i].conlumn_name = conlunm_help[i];
-					table_help.conlumn[i].max_wide = conlunm_help[i].length();
-					if (table_help.conlumn[i].max_wide < UNK.length()) {
-						table_help.conlumn[i].max_wide = UNK.length();
-					}
-				}
+				table_help.conlumn.resize(conlumn_help.size());
+				for (int i = 0; i < conlumn_help.size(); i++)
+					table_help.conlumn[i].conlumn_name = conlumn_help[i];
 				while(!fin.eof()){
 					ss_help.clear();
-					conlunm_help.clear();
+					conlumn_help.clear();
 					input_help.clear();
 					getline(fin, str_help);
 					ss_help.str(str_help);
 					while (ss_help >> input_help) {
-						conlunm_help.push_back(input_help);
+						conlumn_help.push_back(input_help);
 					}
 					for (int j = 0; j < table_help.conlumn.size(); j++) {
-						if (conlunm_help[j] != UNK)
-							table_help.conlumn[j].data.push_back(conlunm_help[j]);
+						if (conlumn_help[j] != UNK)
+							table_help.conlumn[j].data.push_back(conlumn_help[j]);
 						else
 							table_help.conlumn[j].data.push_back(" ");
-						if (table_help.conlumn[j].max_wide < conlunm_help[j].length()) 
-							table_help.conlumn[j].max_wide = conlunm_help[j].length();
 					}		
 				}
 				table.push_back(table_help);
