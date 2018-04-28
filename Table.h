@@ -36,7 +36,7 @@ public:
 	void Divide_string(string str,vector<string>& str_array);
 	bool Check_conlumn(vector<string> check_help);
 	int Check_conlumn(string check_help);
-	bool Check_value(string check_value, vector<string> check_container);
+	bool Check_value(string check_value, string check_help);
 	Table(const Table& origin);
 	Table();
 	~Table();

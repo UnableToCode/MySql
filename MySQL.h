@@ -35,6 +35,7 @@ private:
 	void Drop();
 	void PrintFail();
 	void PrintNoTable();
+	void Divide_string(string str, vector<string>& str_array);
 public:
 	void start();
 	MySQL();

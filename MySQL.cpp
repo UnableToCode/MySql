@@ -18,15 +18,16 @@ void MySQL::start()
 	while (order != "quit") {
 		order = {};
 		mod = 0;
-		string help{};
+		string input_help{};
 		int i = 0;
 		bool flag = false;
+
 		cout << tip;
 		getline(cin, order);
 		stringstream ss(order);
-		while (ss >> help) {
-			order_array.push_back(help);
-		}
+		while (ss >> input_help)
+			order_array.push_back(input_help);
+
 		if (order_array.size() != 0) {
 			if (order_array[0] == order1)
 				mod = 1;
@@ -43,6 +44,7 @@ void MySQL::start()
 			if (order_array[0] == order7)
 				mod = 7;
 		}
+
 		switch (mod)
 		{
 		case 1:
@@ -139,6 +141,7 @@ void MySQL::start()
 		}
 		order_array.clear();
 	}
+
 	for (it = table.begin(); it != table.end(); it++) {
 		it->File_Write();
 	}
@@ -151,13 +154,11 @@ void MySQL::Create()
 	bool flag = true;
 	int create_mod{};
 	int size = order_array.size();
-	int table_size = table.size();
 	vector<string> conlumn_help;
 	string str_help{};
-	string input_help{};
-	stringstream ss_help;
 	Table table_help;
 	int input{};
+
 	if (order_array[size - 2] == "TO"&&order_array.size()==6)
 		create_mod = 1;
 	if (order_array[size - 2] == "FROM"&&order_array.size() == 5)
@@ -171,6 +172,7 @@ void MySQL::Create()
 			create_mod = 3;
 		}
 	}
+
 	switch (create_mod)
 	{
 	case 1:
@@ -185,14 +187,7 @@ void MySQL::Create()
 		}
 		if (flag) {		
 			str_help = order_array[3];
-			for (int i = 0; i < str_help.size(); i++) {
-				if (str_help[i] == '(' || str_help[i] == ')' || str_help[i] == ',')
-					str_help[i] = ' ';
-			}
-			ss_help.str(str_help);
-			while (ss_help >> input_help) {
-				conlumn_help.push_back(input_help);
-			}
+			Divide_string(str_help, conlumn_help);
 			table_help.conlumn.resize(conlumn_help.size());
 			for (int i = 0; i < conlumn_help.size(); i++) 
 				table_help.conlumn[i].conlumn_name = conlumn_help[i];
@@ -218,22 +213,18 @@ void MySQL::Create()
 			}
 			else {			
 				getline(fin, str_help);
-				ss_help.str(str_help);
-				while (ss_help >> input_help) {
-					conlumn_help.push_back(input_help);
+				if (str_help.empty()) {
+					cout << "Erro:file is empty!" << endl;
+					break;
 				}
+				Divide_string(str_help, conlumn_help);
 				table_help.conlumn.resize(conlumn_help.size());
 				for (int i = 0; i < conlumn_help.size(); i++)
 					table_help.conlumn[i].conlumn_name = conlumn_help[i];
 				while(!fin.eof()){
-					ss_help.clear();
 					conlumn_help.clear();
-					input_help.clear();
 					getline(fin, str_help);
-					ss_help.str(str_help);
-					while (ss_help >> input_help) {
-						conlumn_help.push_back(input_help);
-					}
+					Divide_string(str_help, conlumn_help);
 					for (int j = 0; j < table_help.conlumn.size(); j++) {
 						if (conlumn_help[j] != UNK)
 							table_help.conlumn[j].data.push_back(conlumn_help[j]);
@@ -241,9 +232,18 @@ void MySQL::Create()
 							table_help.conlumn[j].data.push_back(" ");
 					}		
 				}
+				int data_length = table_help.conlumn[0].data.size();
+				for (int i = 0; i < table_help.conlumn.size(); i++) {
+					if (table_help.conlumn[i].data.size() != data_length) {
+						cout << "Erro: format of file wrong" << endl;
+						flag = false;
+					}
+				}
+				if (flag) {
 				table.push_back(table_help);
 				read_file.push_back(File_name);
 				table_help.Print_table();
+				}
 				fin.close();
 			}
 		}
@@ -305,4 +305,19 @@ void MySQL::PrintFail()
 void MySQL::PrintNoTable()
 {
 	cout << "Erro: No Tables!" << endl;
+}
+
+void MySQL::Divide_string(string str, vector<string>& str_array)
+{
+	stringstream ss;
+	string input_help{};
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '(' || str[i] == ')' || str[i] == ',')
+			str[i] = ' ';
+	}
+	ss.str(str);
+	while (ss >> input_help) {
+		str_array.push_back(input_help);
+	}
+	ss.clear();
 }
