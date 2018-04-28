@@ -35,14 +35,7 @@ void Table::Inset(vector<string> order_array)
 	{
 	case 1:
 		str_help = order_array[4];
-		for (int i = 0; i < str_help.size(); i++) {
-			if (str_help[i] == '(' || str_help[i] == ')' || str_help[i] == ',')
-				str_help[i] = ' ';
-		}
-		ss.str(str_help);
-		while (ss >> input_help) {
-			vaule_help.push_back(input_help);
-		}
+		Divide_string(str_help, vaule_help);
 		if (vaule_help.size() != conlumn.size()) {
 			cout << "Erro:the number of vaule is not as same as it of conlumn!" << endl;
 		}
@@ -56,25 +49,9 @@ void Table::Inset(vector<string> order_array)
 		break;
 	case 2:
 		str_help = order_array[5];
-		for (int i = 0; i < str_help.size(); i++) {
-			if (str_help[i] == '(' || str_help[i] == ')' || str_help[i] == ',')
-				str_help[i] = ' ';
-		}
-		ss.str(str_help);
-		while (ss >> input_help) {
-			vaule_help.push_back(input_help);
-		}
-		ss.clear();
+		Divide_string(str_help, vaule_help);
 		str_help = order_array[3];
-		for (int i = 0; i < str_help.size(); i++) {
-			if (str_help[i] == '(' || str_help[i] == ')' || str_help[i] == ',')
-				str_help[i] = ' ';
-		}
-		ss.str(str_help);
-		while (ss >> input_help) {
-			conlumn_help.push_back(input_help);
-		}
-		ss.clear();
+		Divide_string(str_help, conlumn_help);
 		for (int i = 0; i < conlumn_help.size(); i++) {
 			flag = false;
 			for (int j = 0; j<conlumn.size(); j++)
@@ -277,26 +254,36 @@ void Table::Select(vector<string> order_array)
 {
 	Table table_help;
 	vector<string> conlumn_help;
-	vector<string> value_help;
-	Conlumn sort_help;
+	vector<string> conlumn_order;
+	vector<int> temp;
+	Conlumn conlumn_input;
 	string conlumn_if{};
-	stringstream ss;
+	string value_if{};
+	string str_help{};
+	string input_help{};
+	string file_name{};
 	int select_mod{};
+	int max_length{};
+	bool flag{ false };
+	int index = -1;
 
 	if (order_array.size() > 3) {
 		if (order_array.size() == 4)
 			select_mod = 1;
-		else if (order_array.size() == 5)
-			select_mod = 2;
+		else if (order_array.size() == 5){
+			if(order_array[1]=="DISTINCT")
+				select_mod = 2;
+		}
 		else if (order_array.size() == 8) {
-			if (order_array[4] == "ORDER")
+			if (order_array[4] == "ORDER"&&order_array[5] == "BY" && (order_array.back() == "ASC" || order_array.back() == "DESC"))
 				select_mod = 3;
 			else if (order_array[4] == "WHERE")
 				select_mod = 4;
 		}
-		else if (order_array.size() == 6)
-			if (order_array[4] == "TO")
+		else if (order_array.size() == 6|| order_array.size() == 10) {
+			if (order_array[order_array.size() - 2] == "TO")
 				select_mod = 5;
+		}
 
 	}
 
@@ -305,14 +292,236 @@ void Table::Select(vector<string> order_array)
 	case 1:
 		if (order_array[1] == "*")
 			Print_table();
+		else {
+			str_help = order_array[1];
+			Divide_string(str_help, conlumn_help);
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				flag = false;
+				for (int j = 0; j < conlumn.size(); j++)
+					if (conlumn[j].conlumn_name == conlumn_help[i]) {
+						flag = true;
+						break;
+					}
+				if (!flag)
+					break;
+			}
+			if (!flag) {
+				cout << "Erro:include Unknown conlumn!" << endl;
+				break;
+			}
+			else {
+				for (int i = 0; i < conlumn_help.size(); i++) {
+					for (int j = 0; j < conlumn.size(); j++)
+						if (conlumn[j].conlumn_name == conlumn_help[i]) {
+							table_help.conlumn.push_back(conlumn[j]);
+						}
+				}
+				table_help.Print_table();
+			}
+		}
 		break;
 	case 2:
-		break;
+		str_help = order_array[2];
+		Divide_string(str_help, conlumn_help);
+		for (int i = 0; i < conlumn_help.size(); i++) {
+			flag = false;
+			for (int j = 0; j < conlumn.size(); j++)
+				if (conlumn[j].conlumn_name == conlumn_help[i]) {
+					flag = true;
+					break;
+				}
+			if (!flag)
+				break;
+		}
+		if (!flag) {
+			cout << "Erro:include Unknown conlumn!" << endl;
+			break;
+		}
+		else {
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				for (int j = 0; j < conlumn.size(); j++)
+					if (conlumn[j].conlumn_name == conlumn_help[i]) {
+						table_help.conlumn.push_back(conlumn[j]);
+						break;
+					}
+			}
+			for (int i = 0; i < table_help.conlumn.size(); i++) {
+				table_help.conlumn[i].data.erase(unique(table_help.conlumn[i].data.begin(), table_help.conlumn[i].data.end()), table_help.conlumn[i].data.end());
+			}
+			max_length = table_help.conlumn[0].data.size();
+			for (int i = 0; i < table_help.conlumn.size(); i++) {
+				if (max_length < table_help.conlumn[i].data.size())
+					max_length = table_help.conlumn[i].data.size();
+			}
+			for (int i = 0; i < table_help.conlumn.size(); i++) {
+				while (table_help.conlumn[i].data.size() < max_length)
+					table_help.conlumn[i].data.push_back(" ");
+			}
+			table_help.Print_table();
+		}
+			break;
 	case 3:
+		str_help = order_array[1];
+		if(str_help=="*")
+			for (int i = 0; i < conlumn.size(); i++) {
+				conlumn_help.push_back(conlumn[i].conlumn_name);
+			}
+		else {
+			Divide_string(str_help, conlumn_help);
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				flag = false;
+				for (int j = 0; j < conlumn.size(); j++)
+					if (conlumn[j].conlumn_name == conlumn_help[i]) {
+						flag = true;
+						break;
+					}
+				if (!flag)
+					break;
+			}
+		}
+		if (!flag) {
+			cout << "Erro:include Unknown conlumn!" << endl;
+			break;
+		}
+		str_help = order_array[6];
+		Divide_string(str_help, conlumn_order);
+		for (int i = 0; i < conlumn_order.size(); i++) {
+			flag = false;
+			for (int j = 0; j < conlumn.size(); j++)
+				if (conlumn[j].conlumn_name == conlumn_order[i]) {
+					flag = true;
+					break;
+				}
+			if (!flag)
+				break;
+		}
+		if (!flag) {
+			cout << "Erro:include Unknown conlumn!" << endl;
+			break;
+		}
+		else {
+			Get_Sort_temp(temp, conlumn_order);
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				conlumn_input.conlumn_name = conlumn_help[i];
+				for (int j = 0; j < conlumn.size(); j++) {
+					if (conlumn_input.conlumn_name == conlumn[j].conlumn_name) {
+						if(order_array.back()=="ASC")
+							for (int k = 0; k < temp.size(); k++) {
+								conlumn_input.data.push_back(conlumn[j].data[temp[k]]);
+							}
+						else if (order_array.back() == "DESC") 
+							for (int k = temp.size() - 1; k >= 0; k--) {
+								conlumn_input.data.push_back(conlumn[j].data[temp[k]]);
+							}
+						table_help.conlumn.push_back(conlumn_input);
+						break;
+					}
+				}
+				conlumn_input.data.clear();
+			}
+			table_help.Print_table();
+		}
 		break;
 	case 4:
+		str_help = order_array[1];
+		conlumn_if = order_array[5];
+		value_if = order_array.back();
+		if (str_help == "*")
+			for (int i = 0; i < conlumn.size(); i++) {
+				conlumn_help.push_back(conlumn[i].conlumn_name);
+			}
+		else
+			Divide_string(str_help, conlumn_help);
+		flag = Check_conlumn(conlumn_help);
+		index = Check_conlumn(conlumn_if);
+		if (!flag || index == -1) {
+			cout << "Erro:include Unknown conlumn!" << endl;
+			break;
+		}
+		else {
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				conlumn_input.conlumn_name = conlumn_help[i];
+				table_help.conlumn.push_back(conlumn_input);
+			}
+			for (int i = 0; i < conlumn[index].data.size(); i++) {
+				if (conlumn[index].data[i] == value_if) {
+					for (int j = 0; j < table_help.conlumn.size(); j++) {
+						for (int k = 0; k < conlumn.size(); k++) {
+							if (table_help.conlumn[j].conlumn_name == conlumn[k].conlumn_name) {
+								table_help.conlumn[j].data.push_back(conlumn[k].data[i]);
+							}
+						}
+					}
+				}
+			}
+			table_help.Print_table();
+		}
 		break;
 	case 5:
+		file_name = order_array.back();
+		str_help = order_array[1];
+		if (str_help == "*")
+			for (int i = 0; i < conlumn.size(); i++) {
+				conlumn_help.push_back(conlumn[i].conlumn_name);
+			}
+		else
+			Divide_string(str_help, conlumn_help);
+		flag = Check_conlumn(conlumn_help);
+		if (!flag) {
+			cout << "Erro:include Unknown conlumn!" << endl;
+			break;
+		}
+		if (order_array[4] == "WHERE") {
+			conlumn_if = order_array[5];
+			value_if = order_array[7];
+			index = Check_conlumn(conlumn_if);
+			if (index == -1) {
+				cout << "Erro:include Unknown conlumn!" << endl;
+				break;
+			}
+			else {
+				for (int i = 0; i < conlumn_help.size(); i++) {
+					conlumn_input.conlumn_name = conlumn_help[i];
+					table_help.conlumn.push_back(conlumn_input);
+				}
+				for (int i = 0; i < conlumn[index].data.size(); i++) {
+					if (conlumn[index].data[i] == value_if) {
+						for (int j = 0; j < table_help.conlumn.size(); j++) {
+							for (int k = 0; k < conlumn.size(); k++) {
+								if (table_help.conlumn[j].conlumn_name == conlumn[k].conlumn_name) {
+									table_help.conlumn[j].data.push_back(conlumn[k].data[i]);
+								}
+							}
+						}
+					}
+				}
+				table_help.Print_table();
+				table_help.Get_Filename(file_name);
+				table_help.File_Write();
+				cout << "File Write Success!" << endl;
+			}
+		}
+		else {
+			for (int i = 0; i < conlumn_help.size(); i++) {
+				conlumn_input.conlumn_name = conlumn_help[i];
+				table_help.conlumn.push_back(conlumn_input);
+			}
+			for (int i = 0; i < conlumn[0].data.size(); i++) {
+				if (true) {
+					for (int j = 0; j < table_help.conlumn.size(); j++) {
+						for (int k = 0; k < conlumn.size(); k++) {
+							if (table_help.conlumn[j].conlumn_name == conlumn[k].conlumn_name) {
+								table_help.conlumn[j].data.push_back(conlumn[k].data[i]);
+							}
+						}
+					}
+				}
+			}
+			table_help.Print_table();
+			table_help.Get_Filename(file_name);
+			table_help.File_Write();
+			cout << "File Write Success!" << endl;
+		}
 		break;
 	default:
 		break;
@@ -331,6 +540,16 @@ void Table::File_Write()
 	if (!fout.is_open()) {
 		cerr << "open file false!" << endl;
 		exit(0);
+	}
+	
+	for (int i = 0; i < conlumn.size(); i++) {
+		conlumn[i].max_wide = conlumn[i].conlumn_name.length();
+		if (conlumn[i].max_wide < UNK.length())
+			conlumn[i].max_wide = UNK.length();
+		for (int j = 0; j < conlumn[i].data.size(); j++) {
+			if (conlumn[i].max_wide < conlumn[i].data[j].length())
+				conlumn[i].max_wide = conlumn[i].data[j].length();
+		}
 	}
 
 	for (int i = 0; i < conlumn.size(); i++) {
@@ -380,7 +599,7 @@ void Table::Print_table()
 	}
 	cout << endl;
 	Print_Line();
-	for (int i = 0; i < conlumn[1].data.size(); i++) {
+	for (int i = 0; i < conlumn[0].data.size(); i++) {
 		cout << "| " << left << setw(4) << i + 1 << "|";
 		for (int j = 0; j < conlumn.size(); j++) {
 				cout << " " << left << setw(conlumn[j].max_wide + 2) << conlumn[j].data[i] << "|";
@@ -390,4 +609,101 @@ void Table::Print_table()
 	if (conlumn.size() != 0)
 		if (conlumn[0].data.size() != 0)
 			Print_Line();
+}
+void Table::Get_Sort_temp(vector<int>& temp, vector<string> conlumn_order)
+{
+	bool flag{ false };
+	temp.push_back(0);
+	vector<int> conlumn_order_index;
+	for (int i = 0; i < conlumn_order.size(); i++) {
+		for (int j = 0; j < conlumn.size(); j++) {
+			if (conlumn_order[i] == conlumn[j].conlumn_name) {
+				conlumn_order_index.push_back(j);
+			}
+		}
+	}
+	
+	for (int i = 1; i < conlumn[conlumn_order_index[0]].data.size(); i++) {
+		for (int j = 0; j < temp.size(); j++) {
+			if (conlumn[conlumn_order_index[0]].data[i] < conlumn[conlumn_order_index[0]].data[temp[j]]) {
+				temp.insert(temp.begin() + j, i);
+				break;
+			}
+			else if (conlumn[conlumn_order_index[0]].data[i] == conlumn[conlumn_order_index[0]].data[temp[j]] && conlumn_order_index.size() > 1) {
+				for (int k = 1; k < conlumn_order_index.size(); k++) {
+					if (conlumn[conlumn_order_index[k]].data[i] == conlumn[conlumn_order_index[k]].data[temp[j]])
+						continue;
+					else if (conlumn[conlumn_order_index[k]].data[i] > conlumn[conlumn_order_index[k]].data[temp[j]])
+						break;
+					else {
+						temp.insert(temp.begin() + j, i);
+						flag = true;
+						break;
+					}
+				}
+			}
+			if (flag) {
+				flag = false;
+				break;
+			}
+			if (j == temp.size() - 1) {
+				temp.push_back(i);
+				break;
+			}
+		}
+	}
+}
+
+void Table::Divide_string(string str, vector<string>& str_array)
+{
+	stringstream ss;
+	string input_help{};
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '(' || str[i] == ')' || str[i] == ',')
+			str[i] = ' ';
+	}
+	ss.str(str);
+	while (ss >> input_help) {
+		str_array.push_back(input_help);
+	}
+	ss.clear();
+}
+
+bool Table::Check_conlumn(vector<string> check_help)
+{
+	bool flag{ false };
+	for (int i = 0; i < check_help.size(); i++) {
+		flag = false;
+		for (int j = 0; j < conlumn.size(); j++)
+			if (conlumn[j].conlumn_name == check_help[i]) {
+				flag = true;
+				break;
+			}
+		if (!flag)
+			break;
+	}
+	return flag;
+}
+bool Table::Check_value(string check_value, vector<string> check_container)
+{
+	bool flag{ false };
+	for (int i = 0; i < check_container.size(); i++)
+		if (check_container[i] == check_value) {
+			flag = true;
+			break;
+		}
+	return flag;
+}
+
+int Table::Check_conlumn(string check_help)
+{
+	bool flag{ false };
+	int index{ -1 };
+	for (int i = 0; i < conlumn.size(); i++)
+		if (check_help == conlumn[i].conlumn_name) {
+			index = i;
+			flag = true;
+			break;
+		}
+	return index;
 }

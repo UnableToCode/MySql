@@ -143,6 +143,7 @@ void MySQL::start()
 		it->File_Write();
 	}
 	table.clear();
+	read_file.clear();
 }
 
 void MySQL::Create()
