@@ -286,6 +286,7 @@ void MySQL::Drop()
 						break;
 					}
 				}
+				it->File_Write();
 				it = table.erase(it);
 				flag = true;
 			}
