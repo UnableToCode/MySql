@@ -82,8 +82,9 @@ void Table::Inset(vector<string> order_array)
 
 void Table::Delete(vector<string> order_array)
 {
-	string conlumn_help{};
-	string value_help{};
+	string conlumn_if{};
+	string value_if{};
+	string if_mod{};
 	bool flag{ false };
 	int delete_mod{};
 	vector<int> index;
@@ -103,9 +104,25 @@ void Table::Delete(vector<string> order_array)
 			break;
 		}
 		
-		conlumn_help = order_array[4];
-		value_help = order_array[6];
-		flag = Get_index(conlumn_help, value_help, index, [](string a, string b) {return a == b; });
+		conlumn_if = order_array[4];
+		value_if = order_array[6];
+		if_mod = order_array[5];
+		if (if_mod == "=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+		else if (if_mod == ">")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+		else if (if_mod == "<")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+		else if (if_mod == ">=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+		else if (if_mod == "<=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+		else if (if_mod == "!=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+		else {
+			cout << "Unknown order, check order DELETE!" << endl;
+			break;
+		}
 		if (!flag)
 			cout << "No such conlumn!" << endl;
 		else if (index.size() == 0)
@@ -139,6 +156,7 @@ void Table::Update(vector<string> order_array)
 	vector<int> index;
 	string conlumn_if{};
 	string value_if{};
+	string if_mod{};
 	int Update_mod{};
 	bool flag{ true };
 
@@ -192,7 +210,23 @@ void Table::Update(vector<string> order_array)
 	case 2:
 		conlumn_if = order_array[order_array.size() - 3];
 		value_if = order_array[order_array.size() - 1];
-		flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+		if_mod = order_array[order_array.size() - 2];
+		if (if_mod == "=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+		else if(if_mod==">")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+		else if (if_mod == "<")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+		else if (if_mod == ">=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+		else if (if_mod == "<=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+		else if (if_mod == "!=")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+		else {
+			cout << "Unknown order, check order UPDATE!" << endl;
+			break;
+		}
 		if (!flag)
 			cout << "No such conlumn!" << endl;
 		else if (index.size() == 0)
@@ -230,6 +264,7 @@ void Table::Select(vector<string> order_array)
 	string str_help{};
 	string input_help{};
 	string file_name{};
+	string if_mod{};
 	int select_mod{};
 	int max_length{};
 	bool flag{ true };
@@ -363,7 +398,23 @@ void Table::Select(vector<string> order_array)
 		if(!flag)
 			cout << "Erro:include Unknown conlumn!" << endl;
 		else {
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			if_mod = order_array[6];
+			if (if_mod == "=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			else if (if_mod == ">")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+			else if (if_mod == "<")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+			else if (if_mod == ">=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+			else if (if_mod == "<=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+			else if (if_mod == "!=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			else {
+				cout << "Unknown order, check order SELECT!" << endl;
+				break;
+			}
 			if (!flag)
 				cout << "No such conlumn!" << endl;
 			else if (index.size() == 0)
@@ -392,7 +443,23 @@ void Table::Select(vector<string> order_array)
 		if (order_array[4] == "WHERE") {
 			conlumn_if = order_array[5];
 			value_if = order_array[7];
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			if_mod = order_array[6];
+			if (if_mod == "=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			else if (if_mod == ">")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+			else if (if_mod == "<")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+			else if (if_mod == ">=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+			else if (if_mod == "<=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+			else if (if_mod == "!=")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			else {
+				cout << "Unknown order, check order SELECT!" << endl;
+				break;
+			}
 			if (!flag)
 				cout << "No such conlumn!" << endl;
 			else if (index.size() == 0)

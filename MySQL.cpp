@@ -80,8 +80,11 @@ void MySQL::start()
 				PrintNoTable();
 			else {
 				i = 0;
-				while (order_array[i] != "FROM"&&i < order_array.size())
-					i++;
+				while (i < order_array.size())
+					if (order_array[i] != "FROM")
+						i++;
+					else
+						break;
 				if (i == order_array.size())
 					cout << "Unknown order, check order DELETE!" << endl;
 				else {
@@ -117,8 +120,11 @@ void MySQL::start()
 				PrintNoTable();
 			else {
 				i = 0;
-				while (order_array[i] != "FROM"&&i < order_array.size())
-					i++;
+				while (i < order_array.size())
+					if (order_array[i] != "FROM")
+						i++;
+					else
+						break;
 				if (i == order_array.size())
 					cout << "Unknown order, check order SELECT!" << endl;
 				else {
@@ -158,21 +164,21 @@ void MySQL::Create()
 	string str_help{};
 	Table table_help;
 	int input{};
-
-	if (order_array[size - 2] == "TO"&&order_array.size()==6)
-		create_mod = 1;
-	if (order_array[size - 2] == "FROM"&&order_array.size() == 5)
-		create_mod = 2;
-	File_name = order_array[size - 1];
-	table_help.table_name = order_array[2];
-	table_help.Get_Filename(File_name);
-	for (it = table.begin(); it != table.end(); it++) {
-		if (it->table_name == table_help.table_name) {
-			cout << "Erro:table name exist!" << endl;
-			create_mod = 3;
+	if (order_array.size() > 4) {
+		if (order_array[size - 2] == "TO"&&order_array.size()==6)
+			create_mod = 1;
+		if (order_array[size - 2] == "FROM"&&order_array.size() == 5)
+			create_mod = 2;
+		File_name = order_array[size - 1];
+		table_help.table_name = order_array[2];
+		table_help.Get_Filename(File_name);
+		for (it = table.begin(); it != table.end(); it++) {
+			if (it->table_name == table_help.table_name) {
+				cout << "Erro:table name exist!" << endl;
+				create_mod = 3;
+			}
 		}
 	}
-
 	switch (create_mod)
 	{
 	case 1:
