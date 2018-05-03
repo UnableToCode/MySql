@@ -1,0 +1,10 @@
+CREATE TABLE Student FROM student.txt
+CREATE TABLE Game (Names,Company,Style) TO game.txt
+SELECT DISTINCT * FROM Student
+SELECT DISTINCT College FROM Student
+SELECT * FROM Student ORDER BY TotalScore ASC
+SELECT * FROM Student TO Student_test.txt
+CREATE TABLE Test FROM Student_test.txt
+INSERT INTO Test VALUES (ma,1733100,Business,Accounting,100,100,100,100,400)
+INSERT INTO Test (Names,College,TotalScore) VALUES (ma,Business,400)
+DELETE FROM Test WHERE TotalScore = 400

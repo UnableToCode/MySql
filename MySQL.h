@@ -25,7 +25,7 @@ private:
 	vector<string> read_file;
 	ofstream fout;
 	ifstream fin;
-	string order;
+	vector<string> order;
 	string File_name;
 	vector<string> order_array;
 	int mod;

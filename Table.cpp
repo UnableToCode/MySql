@@ -119,6 +119,8 @@ void Table::Delete(vector<string> order_array)
 			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 		else if (if_mod == "!=")
 			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+		else if(if_mod == "IN")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 		else {
 			cout << "Unknown order, check order DELETE!" << endl;
 			break;
@@ -223,6 +225,8 @@ void Table::Update(vector<string> order_array)
 			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 		else if (if_mod == "!=")
 			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+		else if (if_mod == "IN")
+			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 		else {
 			cout << "Unknown order, check order UPDATE!" << endl;
 			break;
@@ -411,6 +415,8 @@ void Table::Select(vector<string> order_array)
 				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 			else if (if_mod == "!=")
 				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			else if (if_mod == "IN")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 			else {
 				cout << "Unknown order, check order SELECT!" << endl;
 				break;
@@ -456,6 +462,8 @@ void Table::Select(vector<string> order_array)
 				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 			else if (if_mod == "!=")
 				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			else if (if_mod == "IN")
+				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 			else {
 				cout << "Unknown order, check order SELECT!" << endl;
 				break;

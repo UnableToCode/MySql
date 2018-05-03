@@ -13,141 +13,162 @@ MySQL::~MySQL()
 
 void MySQL::start()
 {
-	order = {};
+	string input_help{};
 	getchar();
-	while (order != "quit") {
-		order = {};
-		mod = 0;
-		string input_help{};
-		int i = 0;
-		bool flag = false;
-
+	while (input_help != "quit") {
 		cout << tip;
-		getline(cin, order);
-		stringstream ss(order);
-		while (ss >> input_help)
-			order_array.push_back(input_help);
-
-		if (order_array.size() != 0) {
-			if (order_array[0] == order1)
-				mod = 1;
-			if (order_array[0] == order2)
-				mod = 2;
-			if (order == order3)
-				mod = 3;
-			if (order_array[0] == order4)
-				mod = 4;
-			if (order_array[0] == order5)
-				mod = 5;
-			if (order_array[0] == order6)
-				mod = 6;
-			if (order_array[0] == order7)
-				mod = 7;
-		}
-
-		switch (mod)
-		{
-		case 1:
-			Create();
-			break;
-		case 2:
-			if (table.size() == 0)
-				PrintNoTable();
+		getline(cin, input_help);
+		if (input_help.find("READ ORDER FROM") == 0) {
+			Divide_string(input_help, order_array);
+			File_name = order_array.back();
+			fin.open(File_name);
+			if (!fin.is_open())
+				cout << "Erro:No such files!" << endl;
 			else {
-				Drop();
+				while (!fin.eof()) {
+					getline(fin, input_help);
+					order.push_back(input_help);
+				}
+				fin.close();
 			}
-			break;
-		case 3:
-			List();
-			break;
-		case 4:
-			if (table.size() == 0)
-				PrintNoTable();
-			else {
-				now_Tabel_name = order_array[2];
-				for (it = table.begin(); it != table.end(); it++) {
-					if (it->table_name == now_Tabel_name) {
-						it->Inset(order_array);
-						flag = true;
+		}
+		else {
+			order.push_back(input_help);
+		}
+		for (int i = 0; i < order.size(); i++) {
+			mod = 0;
+			int j = 0;
+			bool flag = false;
+
+			order_array.clear();
+			stringstream ss(order[i]);
+			while (ss >> input_help)
+				order_array.push_back(input_help);
+
+			if (order_array.size() != 0) {
+				if (order_array[0] == order1)
+					mod = 1;
+				if (order_array[0] == order2)
+					mod = 2;
+				if (order[i] == order3)
+					mod = 3;
+				if (order_array[0] == order4)
+					mod = 4;
+				if (order_array[0] == order5)
+					mod = 5;
+				if (order_array[0] == order6)
+					mod = 6;
+				if (order_array[0] == order7)
+					mod = 7;
+			}
+
+			switch (mod)
+			{
+			case 1:
+				Create();
+				break;
+			case 2:
+				if (table.size() == 0)
+					PrintNoTable();
+				else {
+					Drop();
+				}
+				break;
+			case 3:
+				List();
+				break;
+			case 4:
+				if (table.size() == 0)
+					PrintNoTable();
+				else {
+					now_Tabel_name = order_array[2];
+					for (it = table.begin(); it != table.end(); it++) {
+						if (it->table_name == now_Tabel_name) {
+							it->Inset(order_array);
+							flag = true;
+						}
+					}
+					if (!flag)
+						PrintFail();
+				}
+				break;
+			case 5:
+				if (table.size() == 0)
+					PrintNoTable();
+				else {
+					j = 0;
+					while (j < order_array.size())
+						if (order_array[j] != "FROM")
+							j++;
+						else
+							break;
+					if (j == order_array.size())
+						cout << "Unknown order, check order DELETE!" << endl;
+					else {
+						now_Tabel_name = order_array[j + 1];
+						for (it = table.begin(); it != table.end(); it++) {
+							if (it->table_name == now_Tabel_name) {
+								it->Delete(order_array);
+								flag = true;
+							}
+						}
+						if (!flag)
+							PrintFail();
+					}
+				}
+				break;
+			case 6:
+				if (table.size() == 0)
+					PrintNoTable();
+				else {		
+					now_Tabel_name = order_array[1];
+					for (it = table.begin(); it != table.end(); it++) {
+						if (it->table_name == now_Tabel_name) {
+							it->Update(order_array);
+							flag = true;
+						}
 					}
 				}
 				if (!flag)
 					PrintFail();
-			}
 			break;
-		case 5:
-			if (table.size() == 0)
-				PrintNoTable();
-			else {
-				i = 0;
-				while (i < order_array.size())
-					if (order_array[i] != "FROM")
-						i++;
-					else
-						break;
-				if (i == order_array.size())
-					cout << "Unknown order, check order DELETE!" << endl;
+			case 7:
+				if (table.size() == 0)
+					PrintNoTable();
 				else {
-					now_Tabel_name = order_array[i + 1];
-					for (it = table.begin(); it != table.end(); it++) {
-						if (it->table_name == now_Tabel_name) {
-							it->Delete(order_array);
-							flag = true;
+					j = 0;
+					while (j < order_array.size())
+						if (order_array[j] != "FROM")
+							j++;
+						else
+							break;
+					if (j == order_array.size())
+						cout << "Unknown order, check order SELECT!" << endl;
+					else {
+						now_Tabel_name = order_array[j + 1];
+						for (it = table.begin(); it != table.end(); it++) {
+							if (it->table_name == now_Tabel_name) {
+								it->Select(order_array);
+								flag = true;
+							}
 						}
-					}
-					if (!flag)
-						PrintFail();
-				}
-			}
-			break;
-		case 6:
-			if (table.size() == 0)
-				PrintNoTable();
-			else {		
-				now_Tabel_name = order_array[1];
-				for (it = table.begin(); it != table.end(); it++) {
-					if (it->table_name == now_Tabel_name) {
-						it->Update(order_array);
-						flag = true;
+						if (!flag)
+							PrintFail();
 					}
 				}
+				break;
+			default:
+				if (order[i] != "quit")
+					cout << "Erro: Unknown order!" << endl;
+				break;
 			}
-			if (!flag)
-				PrintFail();
-		break;
-		case 7:
-			if (table.size() == 0)
-				PrintNoTable();
-			else {
-				i = 0;
-				while (i < order_array.size())
-					if (order_array[i] != "FROM")
-						i++;
-					else
-						break;
-				if (i == order_array.size())
-					cout << "Unknown order, check order SELECT!" << endl;
-				else {
-					now_Tabel_name = order_array[i + 1];
-					for (it = table.begin(); it != table.end(); it++) {
-						if (it->table_name == now_Tabel_name) {
-							it->Select(order_array);
-							flag = true;
-						}
-					}
-					if (!flag)
-						PrintFail();
-				}
+			if (order[i] == "quit") {
+				input_help = "quit";
+				break;
 			}
-			break;
-		default:
-			if (order != "quit")
-				cout << "Erro: Unknown order!" << endl;
-			break;
 		}
-		order_array.clear();
+		order.clear();
 	}
-
 	for (it = table.begin(); it != table.end(); it++) {
 		it->File_Write();
 	}
