@@ -4,7 +4,7 @@ Table::Table(const Table& origin)
 {
 	File_name = origin.File_name;
 	table_name = origin.table_name;
-	conlumn = origin.conlumn;
+	column = origin.column;
 }
 
 Table::Table()
@@ -18,7 +18,7 @@ void Table::Inset(vector<string> order_array)
 {
 	bool flag{ true };
 	int Inset_mod{};
-	vector<string> conlumn_help;
+	vector<string> column_help;
 	vector<string> vaule_help;
 	stringstream ss;
 	string input_help;
@@ -36,12 +36,12 @@ void Table::Inset(vector<string> order_array)
 	case 1:
 		str_help = order_array[4];
 		Divide_string(str_help, vaule_help);
-		if (vaule_help.size() != conlumn.size()) {
-			cout << "Erro:the number of vaule is not as same as it of conlumn!" << endl;
+		if (vaule_help.size() != column.size()) {
+			cout << "Erro:the number of vaule is not as same as it of column!" << endl;
 		}
 		else {
-			for (int i = 0; i < conlumn.size(); i++) {
-				conlumn[i].data.push_back(vaule_help[i]);
+			for (int i = 0; i < column.size(); i++) {
+				column[i].data.push_back(vaule_help[i]);
 			}
 			Print_table();
 		}
@@ -51,27 +51,27 @@ void Table::Inset(vector<string> order_array)
 		str_help = order_array[5];
 		Divide_string(str_help, vaule_help);
 		str_help = order_array[3];
-		Divide_string(str_help, conlumn_help);
-		flag = Check_conlumn(conlumn_help);
-		if (vaule_help.size() != conlumn_help.size()) {
-			cout << "Erro:the number of vaule is not as same as it of conlumn!" << endl;
+		Divide_string(str_help, column_help);
+		flag = Check_column(column_help);
+		if (vaule_help.size() != column_help.size()) {
+			cout << "Erro:the number of vaule is not as same as it of column!" << endl;
 		}
 		else if (flag) {
-			for (int i = 0; i < conlumn.size(); i++) {
+			for (int i = 0; i < column.size(); i++) {
 				flag = false;
-				for (int j = 0; j < conlumn_help.size(); j++)
-					if (conlumn[i].conlumn_name == conlumn_help[j]) {
-						conlumn[i].data.push_back(vaule_help[j]);
+				for (int j = 0; j < column_help.size(); j++)
+					if (column[i].column_name == column_help[j]) {
+						column[i].data.push_back(vaule_help[j]);
 						flag = true;	
 						break;
 					}
 					if(!flag)
-						conlumn[i].data.push_back(" ");
+						column[i].data.push_back(" ");
 			}
 			Print_table();
 		}
 		else
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 		
 		break;
 	default:
@@ -82,7 +82,7 @@ void Table::Inset(vector<string> order_array)
 
 void Table::Delete(vector<string> order_array)
 {
-	string conlumn_if{};
+	string column_if{};
 	string value_if{};
 	string if_mod{};
 	bool flag{ false };
@@ -104,43 +104,43 @@ void Table::Delete(vector<string> order_array)
 			break;
 		}
 		
-		conlumn_if = order_array[4];
+		column_if = order_array[4];
 		value_if = order_array[6];
 		if_mod = order_array[5];
 		if (if_mod == "=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a == b; });
 		else if (if_mod == ">")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b; });
 		else if (if_mod == "<")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b; });
 		else if (if_mod == ">=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b || a == b; });
 		else if (if_mod == "<=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 		else if (if_mod == "!=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a != b; });
 		else if(if_mod == "IN")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 		else {
 			cout << "Unknown order, check order DELETE!" << endl;
 			break;
 		}
 		if (!flag)
-			cout << "No such conlumn!" << endl;
+			cout << "No such column!" << endl;
 		else if (index.size() == 0)
 			cout << "Not found this value!" << endl;
 		else {
 			for (int j = index.size() - 1; j >= 0; j--) {
-				for (int i = 0; i < conlumn.size(); i++) {
-					conlumn[i].data.erase(conlumn[i].data.begin() + index[j]);
+				for (int i = 0; i < column.size(); i++) {
+					column[i].data.erase(column[i].data.begin() + index[j]);
 				}
 			}
 			Print_table();
 		}
 		break;
 	case 2:
-		for (int i = 0; i < conlumn.size(); i++) {
-			conlumn[i].data.clear();
+		for (int i = 0; i < column.size(); i++) {
+			column[i].data.clear();
 		}
 		Print_table();
 		break;
@@ -153,10 +153,10 @@ void Table::Delete(vector<string> order_array)
 
 void Table::Update(vector<string> order_array)
 {
-	vector<string> conlumn_help;
+	vector<string> column_help;
 	vector<string> value_help;
 	vector<int> index;
-	string conlumn_if{};
+	string column_if{};
 	string value_if{};
 	string if_mod{};
 	int Update_mod{};
@@ -178,7 +178,7 @@ void Table::Update(vector<string> order_array)
 				break;
 			if (order_array[i] != "=") {
 				if (!is_value) {
-					conlumn_help.push_back(order_array[i]);
+					column_help.push_back(order_array[i]);
 					is_value = true;
 				}
 				else {
@@ -188,9 +188,9 @@ void Table::Update(vector<string> order_array)
 			}
 			i++;
 		}
-		flag = Check_conlumn(conlumn_help);
+		flag = Check_column(column_help);
 		if (!flag) {
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 			Update_mod = 3;
 		}
 
@@ -199,48 +199,48 @@ void Table::Update(vector<string> order_array)
 	switch (Update_mod)
 	{
 	case 1:
-		for (int i = 0; i < conlumn_help.size(); i++) {
-			for (int j = 0; j < conlumn.size(); j++)
-				if (conlumn[j].conlumn_name == conlumn_help[i]) {
-					for (int k = 0; k < conlumn[j].data.size(); k++)
-						conlumn[j].data[k] = value_help[i];
+		for (int i = 0; i < column_help.size(); i++) {
+			for (int j = 0; j < column.size(); j++)
+				if (column[j].column_name == column_help[i]) {
+					for (int k = 0; k < column[j].data.size(); k++)
+						column[j].data[k] = value_help[i];
 					break;
 				}
 		}
 		Print_table();
 		break;
 	case 2:
-		conlumn_if = order_array[order_array.size() - 3];
+		column_if = order_array[order_array.size() - 3];
 		value_if = order_array[order_array.size() - 1];
 		if_mod = order_array[order_array.size() - 2];
 		if (if_mod == "=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a == b; });
 		else if(if_mod==">")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b; });
 		else if (if_mod == "<")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b; });
 		else if (if_mod == ">=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b || a == b; });
 		else if (if_mod == "<=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 		else if (if_mod == "!=")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return a != b; });
 		else if (if_mod == "IN")
-			flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
+			flag = Get_index(column_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 		else {
 			cout << "Unknown order, check order UPDATE!" << endl;
 			break;
 		}
 		if (!flag)
-			cout << "No such conlumn!" << endl;
+			cout << "No such column!" << endl;
 		else if (index.size() == 0)
 			cout << "Not found this value!" << endl;
 		else {
-			for (int i = 0; i < conlumn_help.size(); i++) {
-				for (int j = 0; j < conlumn.size(); j++)
-					if (conlumn[j].conlumn_name == conlumn_help[i]) {
+			for (int i = 0; i < column_help.size(); i++) {
+				for (int j = 0; j < column.size(); j++)
+					if (column[j].column_name == column_help[i]) {
 						for (int k = 0; k < index.size(); k++)
-							conlumn[j].data[index[k]] = value_help[i];
+							column[j].data[index[k]] = value_help[i];
 						break;
 					}
 			}
@@ -258,12 +258,12 @@ void Table::Update(vector<string> order_array)
 void Table::Select(vector<string> order_array)
 {
 	Table table_help;
-	vector<string> conlumn_help;
-	vector<string> conlumn_order;
+	vector<string> column_help;
+	vector<string> column_order;
 	vector<int> temp;
 	vector<int> index;
-	Conlumn conlumn_input;
-	string conlumn_if{};
+	Column column_input;
+	string column_if{};
 	string value_if{};
 	string str_help{};
 	string input_help{};
@@ -300,14 +300,14 @@ void Table::Select(vector<string> order_array)
 			Print_table();
 		else {
 			str_help = order_array[1];
-			Divide_string(str_help, conlumn_help);
-			flag = Check_conlumn(conlumn_help);
+			Divide_string(str_help, column_help);
+			flag = Check_column(column_help);
 			if (!flag) {
-				cout << "Erro:include Unknown conlumn!" << endl;
+				cout << "Erro:include Unknown column!" << endl;
 				break;
 			}
 			else {
-				Get_table_help(table_help, conlumn_help);
+				Get_table_help(table_help, column_help);
 				table_help.Print_table();
 			}
 		}
@@ -315,31 +315,31 @@ void Table::Select(vector<string> order_array)
 	case 2:
 		str_help = order_array[2];
 		if (str_help == "*")
-			for (int i = 0; i < conlumn.size(); i++) {
-				conlumn_help.push_back(conlumn[i].conlumn_name);
+			for (int i = 0; i < column.size(); i++) {
+				column_help.push_back(column[i].column_name);
 			}
 		else {
-			Divide_string(str_help, conlumn_help);
-			flag = Check_conlumn(conlumn_help);
+			Divide_string(str_help, column_help);
+			flag = Check_column(column_help);
 		}
 		if (!flag) {
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 			break;
 		}
 		else {
-			Get_table_help(table_help, conlumn_help);
-			for (int i = 0; i < table_help.conlumn.size(); i++) {
-				sort(table_help.conlumn[i].data.begin(), table_help.conlumn[i].data.end(), [](string a, string b) {return (a.length() < b.length() || a.length() == b.length() && a < b); });
-				table_help.conlumn[i].data.erase(unique(table_help.conlumn[i].data.begin(), table_help.conlumn[i].data.end()), table_help.conlumn[i].data.end());
+			Get_table_help(table_help, column_help);
+			for (int i = 0; i < table_help.column.size(); i++) {
+				sort(table_help.column[i].data.begin(), table_help.column[i].data.end(), [](string a, string b) {return (a.length() < b.length() || a.length() == b.length() && a < b); });
+				table_help.column[i].data.erase(unique(table_help.column[i].data.begin(), table_help.column[i].data.end()), table_help.column[i].data.end());
 			}
-			max_length = table_help.conlumn[0].data.size();
-			for (int i = 0; i < table_help.conlumn.size(); i++) {
-				if (max_length < table_help.conlumn[i].data.size())
-					max_length = table_help.conlumn[i].data.size();
+			max_length = table_help.column[0].data.size();
+			for (int i = 0; i < table_help.column.size(); i++) {
+				if (max_length < table_help.column[i].data.size())
+					max_length = table_help.column[i].data.size();
 			}
-			for (int i = 0; i < table_help.conlumn.size(); i++) {
-				while (table_help.conlumn[i].data.size() < max_length)
-					table_help.conlumn[i].data.push_back(" ");
+			for (int i = 0; i < table_help.column.size(); i++) {
+				while (table_help.column[i].data.size() < max_length)
+					table_help.column[i].data.push_back(" ");
 			}
 			table_help.Print_table();
 		}
@@ -347,86 +347,86 @@ void Table::Select(vector<string> order_array)
 	case 3:
 		str_help = order_array[1];
 		if(str_help=="*")
-			for (int i = 0; i < conlumn.size(); i++) {
-				conlumn_help.push_back(conlumn[i].conlumn_name);
+			for (int i = 0; i < column.size(); i++) {
+				column_help.push_back(column[i].column_name);
 			}
 		else {
-			Divide_string(str_help, conlumn_help);
-			flag = Check_conlumn(conlumn_help);
+			Divide_string(str_help, column_help);
+			flag = Check_column(column_help);
 		}
 		if (!flag) {
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 			break;
 		}
 		str_help = order_array[6];
-		Divide_string(str_help, conlumn_order);
-		flag = Check_conlumn(conlumn_order);
+		Divide_string(str_help, column_order);
+		flag = Check_column(column_order);
 		if (!flag) {
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 			break;
 		}
 		else {
-			Get_Sort_temp(temp, conlumn_order);
-			for (int i = 0; i < conlumn_help.size(); i++) {
-				conlumn_input.conlumn_name = conlumn_help[i];
-				for (int j = 0; j < conlumn.size(); j++) {
-					if (conlumn_input.conlumn_name == conlumn[j].conlumn_name) {
+			Get_Sort_temp(temp, column_order);
+			for (int i = 0; i < column_help.size(); i++) {
+				column_input.column_name = column_help[i];
+				for (int j = 0; j < column.size(); j++) {
+					if (column_input.column_name == column[j].column_name) {
 						if(order_array.back()=="ASC")
 							for (int k = 0; k < temp.size(); k++) {
-								conlumn_input.data.push_back(conlumn[j].data[temp[k]]);
+								column_input.data.push_back(column[j].data[temp[k]]);
 							}
 						else if (order_array.back() == "DESC") 
 							for (int k = temp.size() - 1; k >= 0; k--) {
-								conlumn_input.data.push_back(conlumn[j].data[temp[k]]);
+								column_input.data.push_back(column[j].data[temp[k]]);
 							}
-						table_help.conlumn.push_back(conlumn_input);
+						table_help.column.push_back(column_input);
 						break;
 					}
 				}
-				conlumn_input.data.clear();
+				column_input.data.clear();
 			}
 			table_help.Print_table();
 		}
 		break;
 	case 4:
 		str_help = order_array[1];
-		conlumn_if = order_array[5];
+		column_if = order_array[5];
 		value_if = order_array.back();
 		if (str_help == "*")
-			for (int i = 0; i < conlumn.size(); i++) {
-				conlumn_help.push_back(conlumn[i].conlumn_name);
+			for (int i = 0; i < column.size(); i++) {
+				column_help.push_back(column[i].column_name);
 			}
 		else
-			Divide_string(str_help, conlumn_help);
-		flag = Check_conlumn(conlumn_help);
+			Divide_string(str_help, column_help);
+		flag = Check_column(column_help);
 		if(!flag)
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 		else {
 			if_mod = order_array[6];
 			if (if_mod == "=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a == b; });
 			else if (if_mod == ">")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b; });
 			else if (if_mod == "<")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b; });
 			else if (if_mod == ">=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b || a == b; });
 			else if (if_mod == "<=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 			else if (if_mod == "!=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a != b; });
 			else if (if_mod == "IN")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 			else {
 				cout << "Unknown order, check order SELECT!" << endl;
 				break;
 			}
 			if (!flag)
-				cout << "No such conlumn!" << endl;
+				cout << "No such column!" << endl;
 			else if (index.size() == 0)
 				cout << "Not found this value!" << endl;
 			else {
-				Get_table_help(table_help, conlumn_help, index);
+				Get_table_help(table_help, column_help, index);
 				table_help.Print_table();
 			}
 		}
@@ -435,41 +435,41 @@ void Table::Select(vector<string> order_array)
 		file_name = order_array.back();
 		str_help = order_array[1];
 		if (str_help == "*")
-			for (int i = 0; i < conlumn.size(); i++) {
-				conlumn_help.push_back(conlumn[i].conlumn_name);
+			for (int i = 0; i < column.size(); i++) {
+				column_help.push_back(column[i].column_name);
 			}
 		else {
-			Divide_string(str_help, conlumn_help);
-			flag = Check_conlumn(conlumn_help);
+			Divide_string(str_help, column_help);
+			flag = Check_column(column_help);
 		}
 		if (!flag) {
-			cout << "Erro:include Unknown conlumn!" << endl;
+			cout << "Erro:include Unknown column!" << endl;
 			break;
 		}
 		if (order_array[4] == "WHERE") {
-			conlumn_if = order_array[5];
+			column_if = order_array[5];
 			value_if = order_array[7];
 			if_mod = order_array[6];
 			if (if_mod == "=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a == b; });
 			else if (if_mod == ">")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b; });
 			else if (if_mod == "<")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b; });
 			else if (if_mod == ">=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a > b || a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a > b || a == b; });
 			else if (if_mod == "<=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a < b || a == b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a < b || a == b; });
 			else if (if_mod == "!=")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return a != b; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return a != b; });
 			else if (if_mod == "IN")
-				flag = Get_index(conlumn_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
+				flag = Get_index(column_if, value_if, index, [](string a, string b) {return b.find(a) != string::npos; });
 			else {
 				cout << "Unknown order, check order SELECT!" << endl;
 				break;
 			}
 			if (!flag)
-				cout << "No such conlumn!" << endl;
+				cout << "No such column!" << endl;
 			else if (index.size() == 0)
 				cout << "Not found this value!" << endl;
 			else {
@@ -479,7 +479,7 @@ void Table::Select(vector<string> order_array)
 					fin.close();
 					break;
 				}
-				Get_table_help(table_help, conlumn_help, index);
+				Get_table_help(table_help, column_help, index);
 				table_help.Print_table();
 				table_help.Get_Filename(file_name);
 				table_help.File_Write();
@@ -493,7 +493,7 @@ void Table::Select(vector<string> order_array)
 				fin.close();
 				break;
 			}
-			Get_table_help(table_help, conlumn_help);
+			Get_table_help(table_help, column_help);
 			table_help.Print_table();
 			table_help.Get_Filename(file_name);
 			table_help.File_Write();
@@ -520,26 +520,26 @@ void Table::File_Write()
 		exit(0);
 	}
 	
-	for (int i = 0; i < conlumn.size(); i++) {
-		conlumn[i].max_wide = conlumn[i].conlumn_name.length();
-		if (conlumn[i].max_wide < UNK.length())
-			conlumn[i].max_wide = UNK.length();
-		for (int j = 0; j < conlumn[i].data.size(); j++) {
-			if (conlumn[i].max_wide < conlumn[i].data[j].length())
-				conlumn[i].max_wide = conlumn[i].data[j].length();
+	for (int i = 0; i < column.size(); i++) {
+		column[i].max_wide = column[i].column_name.length();
+		if (column[i].max_wide < UNK.length())
+			column[i].max_wide = UNK.length();
+		for (int j = 0; j < column[i].data.size(); j++) {
+			if (column[i].max_wide < column[i].data[j].length())
+				column[i].max_wide = column[i].data[j].length();
 		}
 	}
 
-	for (int i = 0; i < conlumn.size(); i++) {
-		fout << left<< setw(conlumn[i].max_wide + 2) << conlumn[i].conlumn_name;
+	for (int i = 0; i < column.size(); i++) {
+		fout << left<< setw(column[i].max_wide + 2) << column[i].column_name;
 	}
-	for (int i = 0; i < conlumn[0].data.size(); i++) {
+	for (int i = 0; i < column[0].data.size(); i++) {
 		fout << endl;
-		for (int j = 0; j < conlumn.size(); j++) {
-			if (conlumn[j].data[i] != " ")
-				fout << left << setw(conlumn[j].max_wide + 2) << conlumn[j].data[i];
+		for (int j = 0; j < column.size(); j++) {
+			if (column[j].data[i] != " ")
+				fout << left << setw(column[j].max_wide + 2) << column[j].data[i];
 			else
-				fout << left << setw(conlumn[j].max_wide + 2) << UNK;
+				fout << left << setw(column[j].max_wide + 2) << UNK;
 		}
 	}
 	fout.close();
@@ -548,8 +548,8 @@ void Table::File_Write()
 void Table::Print_Line()
 {
 	cout << "+-----+";
-	for (int i = 0; i < conlumn.size(); i++) {
-		for (int j = 0; j < conlumn[i].max_wide + 3; j++) {
+	for (int i = 0; i < column.size(); i++) {
+		for (int j = 0; j < column[i].max_wide + 3; j++) {
 			cout << "-";
 		}
 		cout << "+";
@@ -559,57 +559,57 @@ void Table::Print_Line()
 
 void Table::Print_table()
 {
-	for (int i = 0; i < conlumn.size(); i++) {
-		conlumn[i].max_wide = conlumn[i].conlumn_name.length();
-		if (conlumn[i].max_wide < UNK.length())
-			conlumn[i].max_wide = UNK.length();
-		for (int j = 0; j < conlumn[i].data.size(); j++) {
-			if (conlumn[i].max_wide < conlumn[i].data[j].length())
-				conlumn[i].max_wide = conlumn[i].data[j].length();
+	for (int i = 0; i < column.size(); i++) {
+		column[i].max_wide = column[i].column_name.length();
+		if (column[i].max_wide < UNK.length())
+			column[i].max_wide = UNK.length();
+		for (int j = 0; j < column[i].data.size(); j++) {
+			if (column[i].max_wide < column[i].data[j].length())
+				column[i].max_wide = column[i].data[j].length();
 		}
 	}
 	Print_Line();
 	cout << "| " << left << setw(4) << "ID"<<"|";
-	for (int i = 0; i < conlumn.size(); i++) {
-		cout << " " << left << setw(conlumn[i].max_wide + 2) << conlumn[i].conlumn_name<<"|";
+	for (int i = 0; i < column.size(); i++) {
+		cout << " " << left << setw(column[i].max_wide + 2) << column[i].column_name<<"|";
 	}
 	cout << endl;
 	Print_Line();
-	for (int i = 0; i < conlumn[0].data.size(); i++) {
+	for (int i = 0; i < column[0].data.size(); i++) {
 		cout << "| " << left << setw(4) << i + 1 << "|";
-		for (int j = 0; j < conlumn.size(); j++) {
-				cout << " " << left << setw(conlumn[j].max_wide + 2) << conlumn[j].data[i] << "|";
+		for (int j = 0; j < column.size(); j++) {
+				cout << " " << left << setw(column[j].max_wide + 2) << column[j].data[i] << "|";
 		}
 		cout << endl;
 	}
-	if (conlumn.size() != 0)
-		if (conlumn[0].data.size() != 0)
+	if (column.size() != 0)
+		if (column[0].data.size() != 0)
 			Print_Line();
 }
-void Table::Get_Sort_temp(vector<int>& temp, vector<string> conlumn_order)
+void Table::Get_Sort_temp(vector<int>& temp, vector<string> column_order)
 {
 	bool flag{ false };
 	temp.push_back(0);
-	vector<int> conlumn_order_index;
-	for (int i = 0; i < conlumn_order.size(); i++) {
-		for (int j = 0; j < conlumn.size(); j++) {
-			if (conlumn_order[i] == conlumn[j].conlumn_name) {
-				conlumn_order_index.push_back(j);
+	vector<int> column_order_index;
+	for (int i = 0; i < column_order.size(); i++) {
+		for (int j = 0; j < column.size(); j++) {
+			if (column_order[i] == column[j].column_name) {
+				column_order_index.push_back(j);
 			}
 		}
 	}
 	
-	for (int i = 1; i < conlumn[conlumn_order_index[0]].data.size(); i++) {
+	for (int i = 1; i < column[column_order_index[0]].data.size(); i++) {
 		for (int j = 0; j < temp.size(); j++) {
-			if (conlumn[conlumn_order_index[0]].data[i] < conlumn[conlumn_order_index[0]].data[temp[j]]) {
+			if (column[column_order_index[0]].data[i] < column[column_order_index[0]].data[temp[j]]) {
 				temp.insert(temp.begin() + j, i);
 				break;
 			}
-			else if (conlumn[conlumn_order_index[0]].data[i] == conlumn[conlumn_order_index[0]].data[temp[j]] && conlumn_order_index.size() > 1) {
-				for (int k = 1; k < conlumn_order_index.size(); k++) {
-					if (conlumn[conlumn_order_index[k]].data[i] == conlumn[conlumn_order_index[k]].data[temp[j]])
+			else if (column[column_order_index[0]].data[i] == column[column_order_index[0]].data[temp[j]] && column_order_index.size() > 1) {
+				for (int k = 1; k < column_order_index.size(); k++) {
+					if (column[column_order_index[k]].data[i] == column[column_order_index[k]].data[temp[j]])
 						continue;
-					else if (conlumn[conlumn_order_index[k]].data[i] > conlumn[conlumn_order_index[k]].data[temp[j]])
+					else if (column[column_order_index[k]].data[i] > column[column_order_index[k]].data[temp[j]])
 						break;
 					else {
 						temp.insert(temp.begin() + j, i);
@@ -645,13 +645,13 @@ void Table::Divide_string(string str, vector<string>& str_array)
 	ss.clear();
 }
 
-bool Table::Check_conlumn(vector<string> check_help)
+bool Table::Check_column(vector<string> check_help)
 {
 	bool flag{ false };
 	for (int i = 0; i < check_help.size(); i++) {
 		flag = false;
-		for (int j = 0; j < conlumn.size(); j++)
-			if (conlumn[j].conlumn_name == check_help[i]) {
+		for (int j = 0; j < column.size(); j++)
+			if (column[j].column_name == check_help[i]) {
 				flag = true;
 				break;
 			}
@@ -664,10 +664,10 @@ bool Table::Check_conlumn(vector<string> check_help)
 bool Table::Get_index(string check_help, string value_help, vector<int>& index, function<bool(string, string)> cmp)
 {
 	bool flag{ false };
-	for (int i = 0; i < conlumn.size(); i++) {
-		if (conlumn[i].conlumn_name == check_help) {
-			for (int j = 0; j<conlumn[i].data.size(); j++)
-				if (cmp(conlumn[i].data[j] , value_help))
+	for (int i = 0; i < column.size(); i++) {
+		if (column[i].column_name == check_help) {
+			for (int j = 0; j<column[i].data.size(); j++)
+				if (cmp(column[i].data[j] , value_help))
 					index.push_back(j);			
 		flag = true;
 		break;
@@ -676,30 +676,30 @@ bool Table::Get_index(string check_help, string value_help, vector<int>& index, 
 	return flag;
 }
 
-void Table::Get_table_help(Table & table_help, vector<string> conlumn_help, vector<int> index)
+void Table::Get_table_help(Table & table_help, vector<string> column_help, vector<int> index)
 {
-	Conlumn conlumn_input;
-	for (int i = 0; i < conlumn_help.size(); i++) {
-		conlumn_input.conlumn_name = conlumn_help[i];
-		table_help.conlumn.push_back(conlumn_input);
+	Column column_input;
+	for (int i = 0; i < column_help.size(); i++) {
+		column_input.column_name = column_help[i];
+		table_help.column.push_back(column_input);
 	}
-	for (int i = 0; i < table_help.conlumn.size(); i++) {
-		for (int j = 0; j < conlumn.size(); j++) {
-			if (table_help.conlumn[i].conlumn_name == conlumn[j].conlumn_name) {
+	for (int i = 0; i < table_help.column.size(); i++) {
+		for (int j = 0; j < column.size(); j++) {
+			if (table_help.column[i].column_name == column[j].column_name) {
 				for (int k = 0; k < index.size(); k++) {
-					table_help.conlumn[i].data.push_back(conlumn[j].data[index[k]]);
+					table_help.column[i].data.push_back(column[j].data[index[k]]);
 				}
 			}
 		}
 	}
 }
 
-void Table::Get_table_help(Table & table_help, vector<string> conlumn_help)
+void Table::Get_table_help(Table & table_help, vector<string> column_help)
 {
-	for (int i = 0; i < conlumn_help.size(); i++) {
-		for (int j = 0; j < conlumn.size(); j++)
-			if (conlumn[j].conlumn_name == conlumn_help[i]) {
-				table_help.conlumn.push_back(conlumn[j]);
+	for (int i = 0; i < column_help.size(); i++) {
+		for (int j = 0; j < column.size(); j++)
+			if (column[j].column_name == column_help[i]) {
+				table_help.column.push_back(column[j]);
 			}
 	}
 }

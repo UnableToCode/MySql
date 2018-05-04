@@ -181,7 +181,7 @@ void MySQL::Create()
 	bool flag = true;
 	int create_mod{};
 	int size = order_array.size();
-	vector<string> conlumn_help;
+	vector<string> column_help;
 	string str_help{};
 	Table table_help;
 	int input{};
@@ -214,10 +214,10 @@ void MySQL::Create()
 		}
 		if (flag) {		
 			str_help = order_array[3];
-			Divide_string(str_help, conlumn_help);
-			table_help.conlumn.resize(conlumn_help.size());
-			for (int i = 0; i < conlumn_help.size(); i++) 
-				table_help.conlumn[i].conlumn_name = conlumn_help[i];
+			Divide_string(str_help, column_help);
+			table_help.column.resize(column_help.size());
+			for (int i = 0; i < column_help.size(); i++) 
+				table_help.column[i].column_name = column_help[i];
 			table_help.File_Write();
 			table.push_back(table_help);
 			table_help.Print_table();
@@ -244,24 +244,24 @@ void MySQL::Create()
 					cout << "Erro:file is empty!" << endl;
 					break;
 				}
-				Divide_string(str_help, conlumn_help);
-				table_help.conlumn.resize(conlumn_help.size());
-				for (int i = 0; i < conlumn_help.size(); i++)
-					table_help.conlumn[i].conlumn_name = conlumn_help[i];
+				Divide_string(str_help, column_help);
+				table_help.column.resize(column_help.size());
+				for (int i = 0; i < column_help.size(); i++)
+					table_help.column[i].column_name = column_help[i];
 				while(!fin.eof()){
-					conlumn_help.clear();
+					column_help.clear();
 					getline(fin, str_help);
-					Divide_string(str_help, conlumn_help);
-					for (int j = 0; j < table_help.conlumn.size(); j++) {
-						if (conlumn_help[j] != UNK)
-							table_help.conlumn[j].data.push_back(conlumn_help[j]);
+					Divide_string(str_help, column_help);
+					for (int j = 0; j < table_help.column.size(); j++) {
+						if (column_help[j] != UNK)
+							table_help.column[j].data.push_back(column_help[j]);
 						else
-							table_help.conlumn[j].data.push_back(" ");
+							table_help.column[j].data.push_back(" ");
 					}		
 				}
-				int data_length = table_help.conlumn[0].data.size();
-				for (int i = 0; i < table_help.conlumn.size(); i++) {
-					if (table_help.conlumn[i].data.size() != data_length) {
+				int data_length = table_help.column[0].data.size();
+				for (int i = 0; i < table_help.column.size(); i++) {
+					if (table_help.column[i].data.size() != data_length) {
 						cout << "Erro: format of file wrong" << endl;
 						flag = false;
 					}
@@ -287,10 +287,10 @@ void MySQL::List()
 {
 	cout << "total:" << table.size() << endl;
 	for (it = table.begin(); it != table.end(); it++) {
-		cout << "\t" << it->table_name << ": (" << it->conlumn.size() << "," << it->conlumn[0].data.size() << ") [";
-		for (int i = 0; i < it->conlumn.size(); i++) {
-			cout << it->conlumn[i].conlumn_name;
-			if (i != it->conlumn.size() - 1)
+		cout << "\t" << it->table_name << ": (" << it->column.size() << "," << it->column[0].data.size() << ") [";
+		for (int i = 0; i < it->column.size(); i++) {
+			cout << it->column[i].column_name;
+			if (i != it->column.size() - 1)
 				cout << ",";
 		}
 		cout << "]" << endl;
